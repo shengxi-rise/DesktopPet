@@ -7,12 +7,23 @@
 #include <QColorDialog>
 #include <QSettings>
 #include <QDebug>
+#include "Struct.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui_(new Ui::MainWindow) {
     ui_->setupUi(this);
 
     qDebug() << "start!!!";
+
+    cfg->beginGroup("eventList");
+    eventCount = cfg->value("count").toInt();
+    qDebug() << "开始" << eventCount;
+    for (int i = 0; i < eventCount; ++i) {
+        eventList node;
+        node.event = cfg->value("event" + QString::number(i)).toString();
+        eventlist.append(node);
+    }
+    cfg->endGroup();
 
     // 去边框
     setWindowFlags(Qt::FramelessWindowHint | windowFlags());
@@ -45,8 +56,8 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 void MainWindow::paintEvent(QPaintEvent *) {
-    QPainter P(this); //创建画家对象
-    P.begin(this);//指定当前窗口为绘图设备
+    QPainter P(this);        //创建画家对象
+    P.begin(this);          //指定当前窗口为绘图设备
     P.drawPixmap(10, 0, QPixmap("../image/image.png"));  // 显示图片
 }
 

@@ -52,9 +52,9 @@ class MainWindow : public QMainWindow {
     // 鼠标释放事件
     void mouseReleaseEvent(QMouseEvent *event) override;
 
-    Form* todo_win_;
+    Form *todo_win_ = new Form;
 
-    AddDialog* add_event_;
+    AddDialog *add_event_ = new AddDialog;
 
  private slots:
     void OnActivatedSysTrayIcon(QSystemTrayIcon::ActivationReason reason);

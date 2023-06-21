@@ -5,7 +5,7 @@
 #include "Struct.h"
 
 QT_BEGIN_NAMESPACE
-namespace Ui {class Form;}
+namespace Ui { class Form; }
 QT_END_NAMESPACE
 
 class Form : public QWidget {
@@ -19,15 +19,12 @@ class Form : public QWidget {
 
     void HideList();
 
-//    void AddEvent();
-
  private:
     Ui::Form *ui_;
 
+    void LoadEvent();
 
-    QList<eventList> evenlist_;
-
-
+    QList<checkBox> status_;
 };
 
 #endif // FORM_H
