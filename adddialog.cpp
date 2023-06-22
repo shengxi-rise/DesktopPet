@@ -2,6 +2,8 @@
 #include "ui_adddialog.h"
 #include "Struct.h"
 
+// 这个是添加事件的窗口
+
 /// TODO: 1. 写入配置文件，每次打开都要从配置文件中导入渲染
 ///       2. 鼠标悬停，随机弹出tips  （qt好像实现不了这样的效果）
 ///       3. 允许用户自定义图像
@@ -13,9 +15,9 @@ AddDialog::AddDialog(QWidget *parent) :
     ui->setupUi(this);
 
     setWindowFlags(Qt::WindowStaysOnTopHint | windowFlags());         // 置顶让用户方便查看其他信息
-    ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);      // 设置表格平分
 
-    //  启动就渲染table的内容
+    //  从配置文件中读取渲染到表格上
     cfg->beginGroup("eventList");
     eventCount = cfg->value("count").toInt();
     ui->tableWidget->setRowCount(eventCount);
@@ -26,6 +28,7 @@ AddDialog::AddDialog(QWidget *parent) :
         qDebug() << cfg->value("event" + QString::number(i + 1)).toString();
     }
     cfg->endGroup();
+
 
     // 确认按钮
     connect(ui->confirm_button, &QPushButton::clicked, this, [&] {
@@ -42,7 +45,7 @@ AddDialog::AddDialog(QWidget *parent) :
 
       this->hide();
 
-      // 写入配置文件
+      // 将数组的数据写入配置文件
       cfg->beginGroup("eventList");
       cfg->setValue("count", eventCount);
       for (int i = 0; i < eventlist.size(); ++i) {
@@ -50,6 +53,7 @@ AddDialog::AddDialog(QWidget *parent) :
       }
       cfg->endGroup();
     });
+
 
     // 添加按钮
     connect(ui->add_button, &QPushButton::clicked, this, [&] {
@@ -63,11 +67,11 @@ AddDialog::AddDialog(QWidget *parent) :
       int position;         // 默认是0
       position = ui->tableWidget->currentRow();         // 如果没选中的话，就是-1
       if (position != -1) {
-          eventCount ? eventCount-- : eventCount = 0;
-          ui->tableWidget->removeRow(position);
-          eventlist.removeAt(position);
+          eventCount ? eventCount-- : eventCount = 0;           // 事件个数-1
+          ui->tableWidget->removeRow(position);             // 删除那一行
+          eventlist.removeAt(position);                         // 从列表中删除
           cfg->beginGroup("eventList");
-          cfg->clear();
+          cfg->clear();                                 // 清空配置文件
           cfg->endGroup();
       }
     });
@@ -78,10 +82,10 @@ AddDialog::AddDialog(QWidget *parent) :
       this->hide();
     });
 
-    // 开启就读取信息进数组
+    // 读取表格上的数据进列表
     for (int i = 0; i < ui->tableWidget->rowCount(); ++i) {
         eventList node;
-        node.event = ui->tableWidget->item(i, 0)->text();         // 不能虚空添加。
+        node.event = ui->tableWidget->item(i, 0)->text();         // 不能虚空添加。（还没解决）
         eventlist.append(node);
     }
     qDebug() << eventlist.size();
