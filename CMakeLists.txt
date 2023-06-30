@@ -50,6 +50,8 @@ else()
 endif()
 
 target_link_libraries(desktop_todo PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+find_package(Qt6 COMPONENTS Network REQUIRED)
+target_link_libraries(desktop_todo PRIVATE Qt6::Network)
 
 set_target_properties(desktop_todo PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

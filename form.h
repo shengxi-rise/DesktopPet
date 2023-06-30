@@ -17,6 +17,8 @@ class Form : public QWidget {
 
     void ShowList();
 
+    void Sentence();
+
     void HideList();
 
  private:

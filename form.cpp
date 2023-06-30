@@ -1,6 +1,8 @@
 #include "form.h"
 #include "ui_form.h"
 #include "Struct.h"
+#include <QNetworkReply>
+#include <QNetworkAccessManager>
 
 // 这个是查看事件的窗口
 
@@ -22,6 +24,7 @@ Form::~Form() {
 //  显示任务列表
 void Form::ShowList() {
     LoadEvent();
+    Sentence();
     this->setWindowFlags(Qt::CoverWindow | Qt::FramelessWindowHint | windowFlags());        // 设置窗口置顶，边框隐藏
     this->setAttribute(Qt::WA_TranslucentBackground);        // 设置窗口透明
     this->show();
@@ -83,4 +86,16 @@ void Form::LoadEvent() {
         ui_->todolist->setItem(i, 0, new QTableWidgetItem("无"));     // 没有选择控件之前，先将就一下吧
 
     }
+}
+
+void Form::Sentence() {
+    QNetworkAccessManager *manager = new QNetworkAccessManager(this);
+    QEventLoop loop;
+    QNetworkReply *reply = manager->get(QNetworkRequest(QUrl("https://v1.hitokoto.cn/?c=f&encode=text")));
+
+    connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+    loop.exec();
+    QString text = QString::fromUtf8(reply->readAll());         // readAll返回的是qbytearry
+    qDebug() << text;
+    ui_->showtext->setText(text);
 }
